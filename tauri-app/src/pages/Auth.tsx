@@ -1,8 +1,8 @@
 import "@/styles/auth.scss";
 import { useState } from "react";
-import { formatPhone,removeDash } from "@/utils/FormatUtils";
-import { postData } from "@/utils/ApiUtils";
-import {validateField,noSpace} from "@/utils/CheckUtils";
+import { formatPhone,removeDash } from "@/utils/formatUtils";
+import { postData } from "@/utils/apiUtils";
+import {noSpace, onlyKorEngKeydown} from "@/utils/checkUtils";
 import "@/styles/vaildate.scss"
 export default function Auth() {
   const [name, setName] = useState("");
@@ -19,27 +19,6 @@ export default function Auth() {
  const handleSignUp = (e: React.FormEvent<HTMLFormElement>) => {
   e.preventDefault();
 
-  if (!name) {
-    validateField(e.currentTarget, "name", "성명을 입력해주세요");
-    return;
-  }
-  if (!email) {
-    validateField(e.currentTarget, "email", "이메일을 입력해주세요");
-    return;
-  }
-  if (!phone) {
-    validateField(e.currentTarget, "phone", "전화번호를 입력해주세요");
-    return;
-  }
-  if (!password) {
-    validateField(e.currentTarget, "password", "비밀번호를 입력해주세요");
-    return;
-  }
-  if (password !== repassword) {
-    validateField(e.currentTarget, "repassword", "비밀번호가 일치하지 않습니다.");
-    e.currentTarget.repassword.value = "";
-    return;
-  }
   removeDash(phone);
   let data =  postData(signUpUrl, { name, email, phone, password });
   console.log(data);
@@ -84,23 +63,36 @@ export default function Auth() {
                           <h4 className="mb-4 pb-3">회원가입</h4>
                           <form name="signupForm" onSubmit={handleSignUp}>
                           <div className="form-group">
-                            <input type="text" name="name" className="form-style" placeholder="성명" id="name" autoComplete="off" value={name} onChange={(e) => setName(e.target.value)} onKeyDown={noSpace} />
+                            <input
+                              type="text"
+                              name="name"
+                              className="form-style"
+                              placeholder="성명"
+                              id="name"
+                              autoComplete="off"
+                              value={name}
+                              onChange={(e) => setName(e.target.value)}
+                              onKeyDown={onlyKorEngKeydown}
+                              required
+                              pattern="^[A-Za-z가-힣ㄱ-ㅎㅏ-ㅣ]+$"
+                              title="한글/영문만 입력하세요"
+                            />
                             <i className="input-icon uil uil-user"></i>
                           </div>
                           <div className="form-group mt-2">
-                            <input type="email" name="email" className="form-style" placeholder="이메일" id="email" autoComplete="off" value={email} onChange={(e) => setEmail(e.target.value)} onKeyDown={noSpace} />
+                            <input type="email" name="email" className="form-style" placeholder="이메일" id="email" autoComplete="off" value={email} onChange={(e) => setEmail(e.target.value)} onKeyDown={noSpace} required  />
                             <i className="input-icon uil uil-at"></i>
                           </div>
                           <div className="form-group mt-2">
-                            <input type="tel" name="phone" className="form-style" placeholder="전화번호" id="phone" autoComplete="off" value={phone} onChange={handlePhoneChange} onKeyDown={noSpace} />
+                            <input type="tel" name="phone" className="form-style" placeholder="전화번호" id="phone" autoComplete="off" value={phone} onChange={handlePhoneChange} onKeyDown={noSpace} required  />
                             <i className="input-icon uil uil-at"></i>
                           </div>
                           <div className="form-group mt-2">
-                            <input type="password" name="password" className="form-style" placeholder="비밀번호" id="password" autoComplete="off" value={password} onChange={(e) => setPassword(e.target.value)} onKeyDown={noSpace} />
+                            <input type="password" name="password" className="form-style" placeholder="비밀번호" id="password" autoComplete="off" value={password} onChange={(e) => setPassword(e.target.value)} onKeyDown={noSpace} required  />
                             <i className="input-icon uil uil-lock-alt"></i>
                           </div>
                           <div className="form-group mt-2">
-                            <input type="password" name="repassword" className="form-style" placeholder="비밀번호 재입력" id="repassword" autoComplete="off" value={repassword} onChange={(e) => setRepassword(e.target.value)} onKeyDown={noSpace} />
+                            <input type="password" name="repassword" className="form-style" placeholder="비밀번호 재입력" id="repassword" autoComplete="off" value={repassword} onChange={(e) => setRepassword(e.target.value)} onKeyDown={noSpace} required  />
                             <i className="input-icon uil uil-lock-alt"></i>
                           </div>
                           <button type="submit" className="btn mt-4">가입</button>
